@@ -106,7 +106,8 @@ public class NavigatorImpl implements Navigator {
         favoriteRoutes.sort(new FavoriteRouteComparator(routeMap));
         ArrayList<Route> result = new ArrayList<>();
         for (Route r : favoriteRoutes) {
-            if (r != null && !r.getLocationPoints()[0].equals(destinationPoint) && Arrays.asList(r.getLocationPoints()).contains(destinationPoint)) {
+            if (r != null && !r.getLocationPoints()[0].equals(destinationPoint)
+                    && Arrays.asList(r.getLocationPoints()).contains(destinationPoint)) {
                 result.add(r);
             }
         }
