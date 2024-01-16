@@ -1,7 +1,6 @@
 package org.example.dataStructures.hashTable;
 
 import java.util.Iterator;
-import java.util.stream.Stream;
 
 public class MonoHashTable<T> implements Iterable<KeyValue<Integer, T>> {
     private final HashTable<Integer, T> hashTable = new HashTable<>();
