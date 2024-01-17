@@ -80,7 +80,7 @@ public class NavigatorImpl implements Navigator {
             ArrayList<String> locations = new ArrayList<>(route.getLocationPoints());
             int startIndex = locations.indexOf(startPoint);
             int endIndex = locations.indexOf(endPoint);
-            if (startIndex >= 0 && endIndex > startIndex && route != null) {
+            if (startIndex >= 0 && endIndex > startIndex) {
                 result.add(route);
             }
         }

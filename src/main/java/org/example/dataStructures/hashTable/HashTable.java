@@ -1,7 +1,9 @@
 package org.example.dataStructures.hashTable;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class HashTable<K, V> implements Iterable<KeyValue<K, V>> {
     private static final int INITIAL_CAPACITY = 16;
@@ -23,7 +25,7 @@ public class HashTable<K, V> implements Iterable<KeyValue<K, V>> {
     public boolean containsValue(V value) {
         for (int i = 0; i < size; i++) {
             if (slots[i] != null) {
-                for (KeyValue kv : slots[i]) {
+                for (KeyValue<K, V> kv : slots[i]) {
                     if (kv.getValue().equals(value)) {
                         return true;
                     }
@@ -152,20 +154,29 @@ public class HashTable<K, V> implements Iterable<KeyValue<K, V>> {
     }
 
     public Iterable<K> keys() {
-        return Arrays.stream(slots)
-                .filter(Objects::nonNull)
-                .flatMap(List::stream)
-                .map(KeyValue::getKey)
-                .toList();
+        ArrayList<K> keyList = new ArrayList<>();
+        for (LinkedList<KeyValue<K, V>> list : slots) {
+            if (list != null) {
+                for (KeyValue<K, V> kv : list) {
+                    keyList.add(kv.getKey());
+                }
+            }
+        }
+        return keyList;
     }
 
     public Iterable<V> values() {
-        return Arrays.stream(slots)
-                .filter(Objects::nonNull)
-                .flatMap(List::stream)
-                .map(KeyValue::getValue)
-                .toList();
+        ArrayList<V> valueList = new ArrayList<>();
+        for (LinkedList<KeyValue<K, V>> list : slots) {
+            if (list != null) {
+                for (KeyValue<K, V> kv : list) {
+                    valueList.add(kv.getValue());
+                }
+            }
+        }
+        return valueList;
     }
+
 
     public long collisionCount() {
         return Arrays.stream(slots)
@@ -179,9 +190,33 @@ public class HashTable<K, V> implements Iterable<KeyValue<K, V>> {
 
     @Override
     public Iterator<KeyValue<K, V>> iterator() {
-        return Arrays.stream(slots)
-                .filter(Objects::nonNull)
-                .flatMap(List::stream)
-                .iterator();
+        return new HashTableIterator<>(slots);
+    }
+
+    public static class HashTableIterator<K, V> implements Iterator<KeyValue<K, V>> {
+        private final LinkedList<KeyValue<K, V>>[] slots;
+        private int currentIndex = 0;
+        private int listIndex = 0;
+
+        public HashTableIterator(LinkedList<KeyValue<K, V>>[] slots) {
+            this.slots = slots;
+        }
+
+        @Override
+        public boolean hasNext() {
+            while (listIndex < slots.length && currentIndex >= slots[listIndex].size()) {
+                listIndex++;
+                currentIndex = 0;
+            }
+            return listIndex < slots.length;
+        }
+
+        @Override
+        public KeyValue<K, V> next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return slots[listIndex].findById(currentIndex++);
+        }
     }
 }
